@@ -1,0 +1,30 @@
+server {
+	listen 80;
+	listen [::]:80;
+	server_name localhost www.localhost;
+	return 301 https://$server_name$request_uri;
+}
+
+server{
+
+	listen 443 ssl ;
+	listen [::]:443 ssl ;
+	#
+	ssl_certificate /root/mkcert/localhost.pem;
+	ssl_certificate_key /root/mkcert/localhost-key.pem;
+
+	root /var/www/localhost;
+
+	index index.html index.htm index.nginx-debian.html index.php;
+
+    server_name localhost www.localhost;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+	}
+}
